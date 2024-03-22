@@ -277,13 +277,13 @@ class App extends React.Component {
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyD6rz5gGWak1SsVY9HgYJnZ2Xo83ejzdvs",
-    authDomain: "test-8517b.firebaseapp.com",
-    projectId: "test-8517b",
-    storageBucket: "test-8517b.appspot.com",
-    messagingSenderId: "910179285225",
-    appId: "1:910179285225:web:012ec239ff32decc25d878",
-    measurementId: "G-CCWS2Z3W9B"
+    apiKey: "AIzaSyCK2D34tRU_EtdnKOBHkHRGAauefh9zAfU",
+        authDomain: "final-project-74bf9.firebaseapp.com",
+        projectId: "final-project-74bf9",
+        storageBucket: "final-project-74bf9.appspot.com",
+        messagingSenderId: "287396430545",
+        appId: "1:287396430545:web:3ac013088ca56393767bf0",
+        measurementId: "G-D3QE6V6FGR"
   };
     firebase.initializeApp(firebaseConfig);      
     const db = firebase.firestore();

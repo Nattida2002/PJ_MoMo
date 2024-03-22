@@ -126,13 +126,6 @@ class App extends React.Component {
         students: [],
         questions: [], // เพิ่ม state สำหรับเก็บคำถาม
         answers: [],   // เพิ่ม state สำหรับเก็บคำตอบ
-      };
-      componentDidMount() {
-        this.autoReadQuestions(); // เรียกใช้เมื่อ Component โหลดเสร็จ
-    }
-    
-
-    state = {
         scene: 0,
         students:[],
         stdid:"",
@@ -142,9 +135,27 @@ class App extends React.Component {
         username: "", // เพิ่ม state สำหรับเก็บข้อมูล username
         password: "", // เพิ่ม state สำหรับเก็บข้อมูล password
         newQuestion: "", // เพิ่ม state สำหรับเก็บคำถามใหม่
-        
-        
+      };
+      componentDidMount() {
+        this.autoReadAnswerQuestion();
+        this.autoReadQuestions(); // เรียกใช้เมื่อ Component โหลดเสร็จ
     }
+
+    
+
+   // state = {
+    //     scene: 0,
+    //     students:[],
+    //     stdid:"",
+    //     stdfname:"",
+    //     stdlname:"",
+    //     stdemail:"",
+    //     username: "", // เพิ่ม state สำหรับเก็บข้อมูล username
+    //     password: "", // เพิ่ม state สำหรับเก็บข้อมูล password
+    //     newQuestion: "", // เพิ่ม state สำหรับเก็บคำถามใหม่
+        
+        
+    // }
     checkAnswer(answer) {
       // ดำเนินการเช็คคำตอบ โดยอาจจะใช้การแสดง Alert หรือการแสดงผลใด ๆ ตามที่คุณต้องการ
       alert(`รหัสนักศึกษา: ${answer.studentId}, คำตอบ: ${answer.answer}`);
@@ -200,22 +211,58 @@ class App extends React.Component {
             });
         });
       }
-      autoReadQuestions() {
-        db.collection("questions").onSnapshot((querySnapshot) => {
-            const questions = [];
-            querySnapshot.forEach((doc) => {
-                questions.push({ id: doc.id, ...doc.data() });
+    //   autoReadQuestions() {
+    //     db.collection("questions").onSnapshot((querySnapshot) => {
+    //         const questions = [];
+    //         querySnapshot.forEach((doc) => {
+    //             questions.push({ id: doc.id, ...doc.data() });
+    //         });
+    //         this.setState({ questions: questions });
+    //     });
+    // }
+    autoRead3() {
+      db.collection("questions").onSnapshot((querySnapshot) => {
+        const questions = [];
+        querySnapshot.forEach((doc) => {
+          checkData.push({ id: doc.id, ...doc.data() });
+        });
+
+        const questionPromises = questions.map((questions) => {
+          return db.collection("questions").doc(questions.id).get();
+        });
+
+        Promise.all(questionPromises)
+          .then((studentSnapshots) => {
+            const students = studentSnapshots.map((snapshot, index) => {
+              const studentData = snapshot.data();
+              return {
+                ...studentData,
+                ...questions, // เพิ่มข้อมูลการเช็คชื่อลงในข้อมูลของนักศึกษา
+              };
             });
             this.setState({ questions: questions });
-        });
+          })
+          .catch((error) => {
+            console.error("เกิดข้อผิดพลาดในการอ่านข้อมูลนักศึกษา: ", error);
+          });
+      });
     }
+    autoReadQuestions() {
+      db.collection("questions").onSnapshot((querySnapshot) => {
+          var questions = [];
+          querySnapshot.forEach((doc) => {
+              questions.push({ id: doc.id, ...doc.data() });
+          });
+          this.setState({ questions: questions });
+      });
+  }
     autoReadAnswerQuestion() {
       db.collection("answers").onSnapshot((querySnapshot) => {
-          const anslist = [];
+          const answers = [];
           querySnapshot.forEach((doc) => {
               anslist.push({ id: doc.id, ...doc.data() });
           });
-          this.setState({ answers: anslist });
+          this.setState({ answers: answers });
       });
   }
   
@@ -224,6 +271,7 @@ class App extends React.Component {
           <div>
               {/* ตรงนี้คุณสามารถเรียกใช้ Component AnswerTable และส่ง props checkAnswer */}
               <AnswerTable answers={this.state.answers} checkAnswer={this.checkAnswer} />
+              <QuestionTable data={this.state.questions} app={this}/>
           </div>
       );
   }
@@ -243,7 +291,6 @@ class App extends React.Component {
     edit(std){      
         this.setState({
          stdid    : std.id,
-        
          stdfname : std.fname,
          stdlname : std.lname,
          stdemail : std.email,
@@ -308,17 +355,10 @@ class App extends React.Component {
         this.setState({ newQuestion: event.target.value });
       };
 
-      autoReadAnswer(){
-        db.collection("answers").onSnapshot((querySnapshot) => {
-            var anslist=[];
-            querySnapshot.forEach((doc) => {
-                anslist.push({id:doc.id,... doc.data()});                
-            });          
-            this.setState({answars: anslist});
-        });
-        
-    }
-      
+
+
+
+
       
     
 
@@ -343,11 +383,11 @@ class App extends React.Component {
         
         <Button onClick={()=>this.autoRead()}>รายชื่อทั้งหมด</Button>
               <Button onClick={()=>this.autoRead2()}>ดูรายชื่อนักศึกษาที่เช็คชื่อแล้ว</Button>
-              <Button onClick={()=>this.answars()}>เช็คคำตอบ</Button>
-              <Button onClick={()=>this.questions()}>ดูคำถามทั้งหมด</Button>
+              <Button onClick={()=>this.autoReadAnswerQuestion()}>เช็คคำตอบ</Button>
+              <Button onClick={()=>this.autoRead3()}>ดูคำถามทั้งหมด</Button>
               <div>
               <StudentTable data={this.state.students} app={this}/>  
-        
+              
               </div>
               
       </div>
@@ -424,13 +464,13 @@ class App extends React.Component {
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyD6rz5gGWak1SsVY9HgYJnZ2Xo83ejzdvs",
-    authDomain: "test-8517b.firebaseapp.com",
-    projectId: "test-8517b",
-    storageBucket: "test-8517b.appspot.com",
-    messagingSenderId: "910179285225",
-    appId: "1:910179285225:web:012ec239ff32decc25d878",
-    measurementId: "G-CCWS2Z3W9B"
+    apiKey: "AIzaSyCK2D34tRU_EtdnKOBHkHRGAauefh9zAfU",
+        authDomain: "final-project-74bf9.firebaseapp.com",
+        projectId: "final-project-74bf9",
+        storageBucket: "final-project-74bf9.appspot.com",
+        messagingSenderId: "287396430545",
+        appId: "1:287396430545:web:3ac013088ca56393767bf0",
+        measurementId: "G-D3QE6V6FGR"
   };
     firebase.initializeApp(firebaseConfig);      
     const db = firebase.firestore();
