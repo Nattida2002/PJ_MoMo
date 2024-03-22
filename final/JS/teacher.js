@@ -40,13 +40,14 @@ function StudentTable({data, app}) {
   );
 }
 
-function AnswerTable({ answers }) {
+function AnswerTable({ answers, checkAnswer }) {
   return (
     <table className='table'>
       <thead>
         <tr>
           <th>รหัสนักศึกษา</th>
           <th>คำตอบ</th>
+          <th>เช็คคำตอบ</th> {/* เพิ่มหัวคอลัมน์เพื่อใส่ปุ่มเช็คคำตอบ */}
         </tr>
       </thead>
       <tbody>
@@ -54,6 +55,7 @@ function AnswerTable({ answers }) {
           <tr key={answer.id}>
             <td>{answer.studentId}</td>
             <td>{answer.answer}</td>
+            <td><button onClick={() => checkAnswer(answer)}>เช็ค</button></td> {/* เพิ่มปุ่มเช็คคำตอบ */}
           </tr>
         ))}
       </tbody>
@@ -122,8 +124,12 @@ class App extends React.Component {
         showAllStudents: false,
         showCheckedStudents: false,
         students: [],
+        questions: [], // เพิ่ม state สำหรับเก็บคำถาม
+        answers: [],   // เพิ่ม state สำหรับเก็บคำตอบ
       };
-      
+      componentDidMount() {
+        this.autoReadQuestions(); // เรียกใช้เมื่อ Component โหลดเสร็จ
+    }
     
 
     state = {
@@ -139,7 +145,10 @@ class App extends React.Component {
         
         
     }
-    
+    checkAnswer(answer) {
+      // ดำเนินการเช็คคำตอบ โดยอาจจะใช้การแสดง Alert หรือการแสดงผลใด ๆ ตามที่คุณต้องการ
+      alert(`รหัสนักศึกษา: ${answer.studentId}, คำตอบ: ${answer.answer}`);
+  }
       
 
     
@@ -191,6 +200,35 @@ class App extends React.Component {
             });
         });
       }
+      autoReadQuestions() {
+        db.collection("questions").onSnapshot((querySnapshot) => {
+            const questions = [];
+            querySnapshot.forEach((doc) => {
+                questions.push({ id: doc.id, ...doc.data() });
+            });
+            this.setState({ questions: questions });
+        });
+    }
+    autoReadAnswerQuestion() {
+      db.collection("answers").onSnapshot((querySnapshot) => {
+          const anslist = [];
+          querySnapshot.forEach((doc) => {
+              anslist.push({ id: doc.id, ...doc.data() });
+          });
+          this.setState({ answers: anslist });
+      });
+  }
+  
+  render() {
+      return (
+          <div>
+              {/* ตรงนี้คุณสามารถเรียกใช้ Component AnswerTable และส่ง props checkAnswer */}
+              <AnswerTable answers={this.state.answers} checkAnswer={this.checkAnswer} />
+          </div>
+      );
+  }
+
+
       
     
     
@@ -282,8 +320,9 @@ class App extends React.Component {
     }
       
       
-      
-      
+    
+
+
 
     render() {
         // var stext = JSON.stringify(this.state.students);  
@@ -304,8 +343,8 @@ class App extends React.Component {
         
         <Button onClick={()=>this.autoRead()}>รายชื่อทั้งหมด</Button>
               <Button onClick={()=>this.autoRead2()}>ดูรายชื่อนักศึกษาที่เช็คชื่อแล้ว</Button>
-              <Button onClick={()=>this.autoReadAnswer()}>เช็คคำตอบ</Button>
-              <Button onClick={()=>this.addQuestionToDatabase()}>ดูคำถามทั้งหมด</Button>
+              <Button onClick={()=>this.autoReadAnswerQuestion()}>เช็คคำตอบ</Button>
+              <Button onClick={()=>this.autoReadQuestions()}>ดูคำถามทั้งหมด</Button>
               <div>
               <StudentTable data={this.state.students} app={this}/>  
         
