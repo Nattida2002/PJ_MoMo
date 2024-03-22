@@ -14,18 +14,36 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  </head>
-  <body>
-    <header>
-        <h1>
-            Check student
-            <a href="./students.html">
-                <button>Login</button>
-            </a>
-        </h1>
-    </header>
+    <style>
+        body {
+            background-color: #D1B2FF; /* สีม่วงอ่อน */
+        }
+
+        #footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .dark{
+            color: #ffffff;
+            background-color: #560f74; /* สีม่วงเข้ม */
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+      
+</head>
+
+<body>
+    <div id="myapp" class="container p-4"></div>
     
-    <div id="myapp" class="container p-4"></div>    
-    <script type="text/babel" src="final.js"></script>
+    <div id="footer">
+        <a href="index.html" class="dark">BACK TO HOME</a>
+    </div>
+    <script type="text/babel" src="JS/teacher.js"></script>
   </body>
 </html>
