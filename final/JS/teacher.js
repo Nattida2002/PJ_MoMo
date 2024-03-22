@@ -304,6 +304,8 @@ class App extends React.Component {
         
         <Button onClick={()=>this.autoRead()}>รายชื่อทั้งหมด</Button>
               <Button onClick={()=>this.autoRead2()}>ดูรายชื่อนักศึกษาที่เช็คชื่อแล้ว</Button>
+              <Button onClick={()=>this.autoReadAnswer()}>เช็คคำตอบ</Button>
+              <Button onClick={()=>this.addQuestionToDatabase()}>ดูคำถามทั้งหมด</Button>
               <div>
               <StudentTable data={this.state.students} app={this}/>  
         
