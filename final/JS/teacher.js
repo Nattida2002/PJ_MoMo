@@ -86,6 +86,28 @@ function AnswerTable({ answers, checkAnswer }) {
     return <button onClick={()=>app.delete(std)}>ลบ</button>
   }
 
+  function QuestionTable({ questions, viewquestion}) {
+    return (
+      <table className='table'>
+        <thead>
+          <tr>
+            <th>คำถามทั้งหมด</th>
+          </tr>
+        </thead>
+        <tbody>
+          {questions.map((fetchQuestionsFromDatabase) => (
+            <tr key={question.id}>
+              <td>{questions.studentId}</td>
+              <td>{questions.questions}</td>
+              <td><button onClick={() => viewquestion(fetchQuestionsFromDatabase)}>ดูคำถามทั้งหมด</button></td> {/* เพิ่มปุ่มเช็คคำตอบ */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+  
+  
 
   
   
@@ -160,7 +182,10 @@ class App extends React.Component {
       // ดำเนินการเช็คคำตอบ โดยอาจจะใช้การแสดง Alert หรือการแสดงผลใด ๆ ตามที่คุณต้องการ
       alert(`รหัสนักศึกษา: ${answer.studentId}, คำตอบ: ${answer.answer}`);
   }
-      
+  viewquestion(questions) {
+    // ดำเนินการเช็คคำตอบ โดยอาจจะใช้การแสดง Alert หรือการแสดงผลใด ๆ ตามที่คุณต้องการ
+    alert(`คำถามทั้งหมด: ${questions.studentId}`);
+}  
 
     
       
@@ -271,7 +296,7 @@ class App extends React.Component {
           <div>
               {/* ตรงนี้คุณสามารถเรียกใช้ Component AnswerTable และส่ง props checkAnswer */}
               <AnswerTable answers={this.state.answers} checkAnswer={this.checkAnswer} />
-              <QuestionTable data={this.state.questions} app={this}/>
+              <QuestionTable questions={this.state.questions} viewquestion={this.viewquestion}/>
           </div>
       );
   }
@@ -464,13 +489,13 @@ class App extends React.Component {
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCK2D34tRU_EtdnKOBHkHRGAauefh9zAfU",
-        authDomain: "final-project-74bf9.firebaseapp.com",
-        projectId: "final-project-74bf9",
-        storageBucket: "final-project-74bf9.appspot.com",
-        messagingSenderId: "287396430545",
-        appId: "1:287396430545:web:3ac013088ca56393767bf0",
-        measurementId: "G-D3QE6V6FGR"
+    apiKey: "AIzaSyD6rz5gGWak1SsVY9HgYJnZ2Xo83ejzdvs",
+    authDomain: "test-8517b.firebaseapp.com",
+    projectId: "test-8517b",
+    storageBucket: "test-8517b.appspot.com",
+    messagingSenderId: "910179285225",
+    appId: "1:910179285225:web:012ec239ff32decc25d878",
+    measurementId: "G-CCWS2Z3W9B"
   };
     firebase.initializeApp(firebaseConfig);      
     const db = firebase.firestore();
